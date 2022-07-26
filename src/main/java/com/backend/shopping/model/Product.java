@@ -5,8 +5,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class Product {
 
   @Id
@@ -16,5 +24,5 @@ public class Product {
   Long cost;
   String productName;
   @OneToOne
-  Seller seller;
+  User seller;
 }
