@@ -1,6 +1,7 @@
 package com.backend.shopping.service;
 
 import com.backend.shopping.dto.DepositDTO;
+import com.backend.shopping.dto.UserDTO;
 import com.backend.shopping.model.User;
 import com.backend.shopping.repository.UserRepository;
 import java.util.Optional;
@@ -13,7 +14,8 @@ public class UserService {
   @Autowired
   UserRepository userRepository;
 
-  public User registerUser(User user){
+  public User registerUser(UserDTO userDTO){
+    User user = new User(userDTO);
     return userRepository.save(user);
   }
 
@@ -28,5 +30,9 @@ public class UserService {
     user.ifPresent(u -> u.setDeposit(0L));
     user.ifPresent(value -> userRepository.save(value));
     return user;
+  }
+
+  public Optional<User> find(Long userId) {
+    return userRepository.findById(userId);
   }
 }
