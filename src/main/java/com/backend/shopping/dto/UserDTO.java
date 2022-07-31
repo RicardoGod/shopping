@@ -19,16 +19,16 @@ public class UserDTO {
   Long id;
   String username;
   String password;
-  Long deposit;
-  Role role;
+  DepositDTO deposit;
+  String role;
   List<Long> productIds;
 
   public UserDTO(User user){
     this.id = user.getId();
     this.username = user.getUsername();
     this. password = user.getPassword();
-    this.deposit = user.getDeposit();
-    this.role = user.getRole();
+    this.deposit = new DepositDTO(user.getDeposit());
+    this.role = user.getRole().getName().toString();
     this.productIds = user.getProducts().stream()
         .map(Product::getId)
         .collect(Collectors.toList());

@@ -3,6 +3,7 @@ package com.backend.shopping.model;
 import com.backend.shopping.dto.ProductDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +28,7 @@ public class Product {
   Long amountAvailable;
   Long cost;
   String productName;
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   User seller;
 
   public Product(ProductDTO productDTO) {

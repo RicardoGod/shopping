@@ -1,48 +1,46 @@
 package com.backend.shopping.model;
 
-
-import com.backend.shopping.dto.DepositDTO;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.tomcat.util.digester.ArrayStack;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Deposit {
+public class Coin {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Long id;
 
-  @OneToMany(mappedBy = "deposit")
-  List<Coin> coins = new ArrayList<>();
+  @Enumerated(EnumType.STRING)
+  CoinValue coinValue;
 
-  @OneToOne(mappedBy = "deposit")
-  User user;
+  @ManyToOne
+  Deposit deposit;
+
+  public Coin(CoinValue coinValue) {
+    this.coinValue = coinValue;
+  }
 
   @Override
   public String toString() {
-    return "Deposit{" +
+    return "Coin{" +
         "id=" + id +
-        ", coins=" + coins +
+        ", coinValue=" + coinValue +
         '}';
   }
 }

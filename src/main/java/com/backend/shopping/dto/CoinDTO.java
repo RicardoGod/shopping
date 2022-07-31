@@ -1,17 +1,17 @@
 package com.backend.shopping.dto;
 
+import com.backend.shopping.model.CoinValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public enum CoinDTO {
-  FIVE_CENTS(5),
-  TEN_CENTS(10),
-  TWENTY_CENTS(20),
-  FIFTY_CENTS(50),
-  ONE_HUNDRED_CENTS(100);
+@Setter
+public class CoinDTO {
 
-  private int value;
+  CoinValue coinValue;
 
 }

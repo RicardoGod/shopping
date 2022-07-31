@@ -2,6 +2,7 @@ package com.backend.shopping.service;
 
 import com.backend.shopping.dto.ProductDTO;
 import com.backend.shopping.model.Product;
+import com.backend.shopping.model.ProductMapper;
 import com.backend.shopping.model.User;
 import com.backend.shopping.repository.ProductRepository;
 import com.backend.shopping.repository.UserRepository;
@@ -18,6 +19,9 @@ public class ProductService {
   @Autowired
   UserRepository userRepository;
 
+  @Autowired
+  ProductMapper productMapper;
+
   public Product addProduct(ProductDTO productDTO) {
     Optional<User> user = userRepository.findById(productDTO.getUserId());
     Product product = new Product(productDTO);
@@ -30,9 +34,9 @@ public class ProductService {
   }
 
   public Optional<Product> update(Long productId, ProductDTO productDTO) {
-    Product product = new Product(productDTO);
-    product.setId(productId);
-    productRepository.findById(productId).ifPresent(ignored -> productRepository.save(product));
+    Optional<Product> product = productRepository.findById(productId);
+    product.ifPresent(p -> productMapper.updateProductFromDto(productDTO, p));
+    product.ifPresent(p -> productRepository.save(p));
     return productRepository.findById(productId);
   }
 
