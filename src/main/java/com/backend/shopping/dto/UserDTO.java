@@ -1,7 +1,6 @@
 package com.backend.shopping.dto;
 
 import com.backend.shopping.model.Product;
-import com.backend.shopping.model.Role;
 import com.backend.shopping.model.User;
 import java.util.List;
 import java.util.stream.Collectors;

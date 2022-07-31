@@ -70,6 +70,7 @@ public class UserService {
         .toList();
   }
 
+  @Transactional(rollbackOn = Exception.class)
   public Optional<User> addDeposit(CoinDTO coinDTO, Long userId) {
     Optional<User> user = userRepository.findById(userId);
     if(user.isPresent()){
@@ -89,6 +90,7 @@ public class UserService {
     return deposit;
   }
 
+  @Transactional(rollbackOn = Exception.class)
   public Optional<User> resetDeposit(Long userId) {
     Optional<User> user = userRepository.findById(userId);
     if(user.isPresent()){

@@ -2,7 +2,6 @@ package com.backend.shopping.controller;
 
 import com.backend.shopping.dto.CartDTO;
 import com.backend.shopping.dto.CoinDTO;
-import com.backend.shopping.dto.DepositDTO;
 import com.backend.shopping.dto.PurchaseDTO;
 import com.backend.shopping.dto.UserDTO;
 import com.backend.shopping.exceptions.NotEnoughMoneyException;

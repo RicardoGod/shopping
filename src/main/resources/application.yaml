@@ -18,7 +18,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate:
-        show_sql: true
+        show_sql: false
         format_sql: true
 
   h2:
@@ -28,7 +28,7 @@ spring:
 
 logging:
   level:
-    web: TRACE
+    web: INFO
     org:
       springframework:
-        web:  TRACE
+        web:  INFO

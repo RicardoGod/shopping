@@ -4,11 +4,13 @@ import com.backend.shopping.dto.CartDTO;
 import com.backend.shopping.dto.DepositDTO;
 import com.backend.shopping.dto.ProductDTO;
 import com.backend.shopping.dto.PurchaseDTO;
+import com.backend.shopping.exceptions.InvalidAccessException;
 import com.backend.shopping.exceptions.NotEnoughMoneyException;
 import com.backend.shopping.model.Coin;
 import com.backend.shopping.model.CoinValue;
 import com.backend.shopping.model.Deposit;
 import com.backend.shopping.model.Product;
+import com.backend.shopping.model.RoleCategory;
 import com.backend.shopping.model.User;
 import com.backend.shopping.repository.CoinRepository;
 import com.backend.shopping.repository.DepositRepository;
@@ -19,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +48,16 @@ public class CartService {
     Optional<Product> optionalProduct = productRepository.findById(cart.getProductId());
 
     if (optionalUser.isPresent() && optionalProduct.isPresent()) {
+      User user = optionalUser.get();
+
+      if(user.getRole().getName() != RoleCategory.BUYER){
+        log.error("User does not have required ROLE to perform action!");
+        throw new InvalidAccessException();
+      }
+
       Product product = getProductResultAfterOperation(cart, optionalProduct.get());
       Long totalCost = product.getCost() * cart.getQuantity();
 
-      User user = optionalUser.get();
       Deposit deposit = user.getDeposit();
 
       Long currentBalance = getBalance(deposit);
