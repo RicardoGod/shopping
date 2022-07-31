@@ -1,6 +1,7 @@
 package com.backend.shopping.model;
 
 import com.backend.shopping.dto.UserDTO;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "\"user\"")
-public class User {
+public class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +46,7 @@ public class User {
 
   public User(UserDTO userDTO) {
     this.username = userDTO.getUsername();
-    this.password = userDTO.getPassword();
+    this.password = "{noop}" + userDTO.getPassword();
   }
 
   @Override

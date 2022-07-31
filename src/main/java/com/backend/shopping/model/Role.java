@@ -13,13 +13,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Entity
-public class Role {
+public class Role implements GrantedAuthority {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Long id;
@@ -35,6 +36,11 @@ public class Role {
     return "Role{" +
         "name=" + name +
         '}';
+  }
+
+  @Override
+  public String getAuthority() {
+    return name.toString();
   }
 }
 
