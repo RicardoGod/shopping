@@ -16,15 +16,18 @@ public class BasicAuthWebSecurityConfiguration {
     http
         .csrf().disable()
         .authorizeRequests()
+        .antMatchers("/h2").permitAll()
         .antMatchers(HttpMethod.POST, "/user").permitAll()
-        .antMatchers(HttpMethod.GET,"/user/*").authenticated()
+        .antMatchers(HttpMethod.GET,"/user").authenticated()
+        .antMatchers(HttpMethod.GET,"/user/").authenticated()
         .antMatchers(HttpMethod.POST,"/user/reset").authenticated()
         .antMatchers(HttpMethod.POST, "/user/buy").hasAuthority(RoleCategory.BUYER.toString())
         .antMatchers(HttpMethod.POST, "/user/deposit").hasAuthority(RoleCategory.BUYER.toString())
-        .antMatchers("/product/*").authenticated()
         .antMatchers(HttpMethod.POST, "/product").hasAuthority(RoleCategory.SELLER.toString())
+        .antMatchers(HttpMethod.POST, "/product/").hasAuthority(RoleCategory.SELLER.toString())
         .antMatchers(HttpMethod.PUT, "/product/*").hasAuthority(RoleCategory.SELLER.toString())
         .antMatchers(HttpMethod.DELETE, "/product/*").hasAuthority(RoleCategory.SELLER.toString())
+        .anyRequest().authenticated()
         .and()
         .httpBasic();
 

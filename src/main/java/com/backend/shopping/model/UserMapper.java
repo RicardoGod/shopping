@@ -9,6 +9,7 @@ import org.mapstruct.MappingTarget;
 public interface UserMapper {
 
 
+  @Mapping(target = "id", ignore = true)
   @Mapping(target = "role", ignore = true)
   void updateCustomerFromDto(UserDTO dto, @MappingTarget User entity);
 }

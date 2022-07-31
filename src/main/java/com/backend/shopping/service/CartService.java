@@ -16,14 +16,17 @@ import com.backend.shopping.repository.CoinRepository;
 import com.backend.shopping.repository.DepositRepository;
 import com.backend.shopping.repository.ProductRepository;
 import com.backend.shopping.repository.UserRepository;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -43,45 +46,33 @@ public class CartService {
   CoinRepository coinRepository;
 
   @Transactional(rollbackOn = {Exception.class})
-  public PurchaseDTO purchaseCart(CartDTO cart, Long userId) {
-    Optional<User> optionalUser = userRepository.findById(userId);
-    Optional<Product> optionalProduct = productRepository.findById(cart.getProductId());
+  public PurchaseDTO purchaseCart(CartDTO cart, Principal principal) throws NotFoundException {
+    User user = userRepository.findByUsername(principal.getName());
+    Product product = productRepository.findById(cart.getProductId()).orElseThrow(NotFoundException::new);
 
-    if (optionalUser.isPresent() && optionalProduct.isPresent()) {
-      User user = optionalUser.get();
+    getProductResultAfterOperation(cart, product);
+    Long totalCost = product.getCost() * cart.getQuantity();
 
-      if(user.getRole().getName() != RoleCategory.BUYER){
-        log.error("User does not have required ROLE to perform action!");
-        throw new InvalidAccessException();
-      }
+    Deposit deposit = user.getDeposit();
 
-      Product product = getProductResultAfterOperation(cart, optionalProduct.get());
-      Long totalCost = product.getCost() * cart.getQuantity();
+    Long currentBalance = getBalance(deposit);
 
-      Deposit deposit = user.getDeposit();
-
-      Long currentBalance = getBalance(deposit);
-
-      if (currentBalance < totalCost) {
-        log.error("User does not have enough Deposit to pay! CurrentBalance=[{}] TotalCost=[{}]", currentBalance, totalCost);
-        throw new NotEnoughMoneyException();
-      }
-
-      Deposit depositChange = purchase(deposit, totalCost);
-
-      depositRepository.save(deposit);
-      productRepository.save(product);
-
-      return new PurchaseDTO(totalCost, new ProductDTO(product), new DepositDTO(depositChange));
+    if (currentBalance < totalCost) {
+      log.error("User does not have enough Deposit to pay! CurrentBalance=[{}] TotalCost=[{}]", currentBalance, totalCost);
+      throw new NotEnoughMoneyException();
     }
 
-    throw new IllegalArgumentException();
+    Deposit depositChange = purchase(deposit, totalCost);
+
+    depositRepository.save(deposit);
+    productRepository.save(product);
+
+    return new PurchaseDTO(totalCost, new ProductDTO(product), new DepositDTO(depositChange));
   }
 
-  private Product getProductResultAfterOperation(CartDTO cart, Product product) {
+  private void getProductResultAfterOperation(CartDTO cart, Product product) {
     Long quantityRemaining = product.getAmountAvailable() - cart.getQuantity();
     product.setAmountAvailable(quantityRemaining);
-    return product;
   }
 
   private Long getBalance(Deposit deposit) {
@@ -112,7 +103,7 @@ public class CartService {
   private Coin getMaximumCoinValue(Deposit initialDeposit) {
     List<Coin> collect = initialDeposit.getCoins().stream()
         .sorted(Comparator.comparingLong(c -> c.getCoinValue().getValue()))
-        .toList();
+        .collect(Collectors.toList());
 
     Collections.reverse(collect);
 

@@ -1,6 +1,7 @@
 package com.backend.shopping.service;
 
 import com.backend.shopping.dto.CoinDTO;
+import com.backend.shopping.dto.DepositDTO;
 import com.backend.shopping.dto.UserDTO;
 import com.backend.shopping.model.Coin;
 import com.backend.shopping.model.Deposit;
@@ -11,8 +12,10 @@ import com.backend.shopping.repository.CoinRepository;
 import com.backend.shopping.repository.DepositRepository;
 import com.backend.shopping.repository.RoleRepository;
 import com.backend.shopping.repository.UserRepository;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -47,12 +50,15 @@ public class UserService {
     Deposit deposit = new Deposit();
     deposit = depositRepository.save(deposit);
 
-    List<Coin> coins = initCoins(userDTO.getDeposit().getCoins());
-    for(Coin c : coins){
-      c.setDeposit(deposit);
+    DepositDTO depositDTO = userDTO.getDeposit();
+    if(Objects.nonNull(depositDTO)) {
+      List<Coin> coins = initCoins(depositDTO.getCoins());
+      for (Coin c : coins) {
+        c.setDeposit(deposit);
+      }
+      coins.forEach(coin -> coinRepository.save(coin));
+      deposit.setCoins(coins);
     }
-    coins.forEach(coin -> coinRepository.save(coin));
-    deposit.setCoins(coins);
 
     user.setDeposit(deposit);
 
@@ -71,15 +77,11 @@ public class UserService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  public Optional<User> addDeposit(CoinDTO coinDTO, Long userId) {
-    Optional<User> user = userRepository.findById(userId);
-    if(user.isPresent()){
-      Deposit deposit = addCoinToDeposit(user.get().getDeposit(), coinDTO);
-      depositRepository.save(deposit);
-      return userRepository.findById(userId);
-    } else {
-      return Optional.empty();
-    }
+  public User addDeposit(CoinDTO coinDTO, Principal principal) {
+    User user = userRepository.findByUsername(principal.getName());
+    Deposit deposit = addCoinToDeposit(user.getDeposit(), coinDTO);
+    depositRepository.save(deposit);
+    return userRepository.findByUsername(principal.getName());
   }
 
   private Deposit addCoinToDeposit(Deposit deposit, CoinDTO coinDTO){
@@ -91,15 +93,11 @@ public class UserService {
   }
 
   @Transactional(rollbackOn = Exception.class)
-  public Optional<User> resetDeposit(Long userId) {
-    Optional<User> user = userRepository.findById(userId);
-    if(user.isPresent()){
-      Deposit deposit = tookAllCoins(user.get().getDeposit());
-      depositRepository.save(deposit);
-      return userRepository.findById(userId);
-    } else {
-      return Optional.empty();
-    }
+  public User resetDeposit(Principal principal) {
+    User user = userRepository.findByUsername(principal.getName());
+    Deposit deposit = tookAllCoins(user.getDeposit());
+    depositRepository.save(deposit);
+    return userRepository.findByUsername(principal.getName());
   }
 
   private Deposit tookAllCoins(Deposit deposit){
@@ -109,9 +107,7 @@ public class UserService {
     return deposit;
   }
 
-  public Optional<User> find(Long userId) {
-    Optional<User> persistedUser = userRepository.findById(userId);
-    persistedUser.ifPresent(u -> log.warn(u.toString()));
-    return persistedUser;
+  public User find(Principal principal) {
+    return userRepository.findByUsername(principal.getName());
   }
 }

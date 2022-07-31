@@ -16,14 +16,12 @@ public class ProductDTO {
   Long amountAvailable;
   Long cost;
   String productName;
-  Long userId;
 
   public ProductDTO(Product product){
     this.id = product.getId();
     this.amountAvailable = product.getAmountAvailable();
     this.cost = product.getCost();
     this.productName = product.getProductName();
-    this.userId = product.getSeller() != null ? product.getSeller().getId() : null;
   }
 
 }

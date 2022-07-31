@@ -25,7 +25,8 @@ public class Product {
   Long amountAvailable;
   Long cost;
   String productName;
-  @ManyToOne(cascade = CascadeType.ALL)
+
+  @ManyToOne
   User seller;
 
   public Product(ProductDTO productDTO) {
