@@ -8,7 +8,6 @@ import com.backend.shopping.model.User;
 import com.backend.shopping.repository.ProductRepository;
 import com.backend.shopping.repository.UserRepository;
 import java.security.Principal;
-import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;

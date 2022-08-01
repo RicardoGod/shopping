@@ -1,7 +1,6 @@
 package com.backend.shopping.controller;
 
 import com.backend.shopping.dto.ProductDTO;
-import com.backend.shopping.exceptions.InvalidAccessException;
 import com.backend.shopping.model.Product;
 import com.backend.shopping.service.ProductService;
 import java.security.Principal;

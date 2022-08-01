@@ -1,7 +1,6 @@
 package com.backend.shopping.model;
 
 import com.backend.shopping.dto.ProductDTO;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
